@@ -73,9 +73,9 @@ export default function Page() {
         dispatch(setNavActive('Base'))
     }, [dispatch, Router])
 
-    useEffect(() => {
-        toast.warning("This is Dummy Website Don't add your Origial Details Here !")
-    }, [])
+    // useEffect(() => {
+    //     toast.warning("This is Dummy Website Don't add your Origial Details Here !")
+    // }, [])
 
    
   

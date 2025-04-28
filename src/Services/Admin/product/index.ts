@@ -95,3 +95,5 @@ export const add_new_product = async (formData: any) => {
       console.log('Error in getting product by category ID (service) =>', error)
     }
   }
+
+  

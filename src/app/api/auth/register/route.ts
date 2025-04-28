@@ -19,6 +19,7 @@ export  async function POST (req : Request)  {
 
     const { email, password, name } = await req.json();
     const { error } = schema.validate({ email, password, name });
+    
 
     if (error) return NextResponse.json({ success: false, message: error.details[0].message.replace(/['"]+/g, '') });
 
@@ -31,7 +32,7 @@ export  async function POST (req : Request)  {
 
         else {
             const hashedPassword = await hash(password, 12)
-            const createUser = await User.create({ email, name, password: hashedPassword , role : 'user' });
+            const createUser = await User.create({ email, name, password: hashedPassword , role : 'admin' });
             if(createUser) return NextResponse.json({ success: true, message: "Account created successfully" });
         }
     } catch (error) {

@@ -3,8 +3,8 @@
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 import { useForm, SubmitHandler } from "react-hook-form";
-import { storage } from '@/utils/Firebase'
-import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
+// import { storage } from '@/utils/Firebase'
+// import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
 import { ToastContainer, toast } from 'react-toastify';
 import { TailSpin } from 'react-loader-spinner';
 import { useRouter } from 'next/navigation';
@@ -13,6 +13,7 @@ import { RootState } from '@/Store/store';
 import Cookies from 'js-cookie';
 import { useSWRConfig } from "swr"
 import { add_new_product } from '@/Services/Admin/product';
+
  
 
 
@@ -39,37 +40,55 @@ interface loaderType {
 
 
 const uploadImages = async (file: File) => {
-    const createFileName = () => {
-        const timestamp = Date.now();
-        const randomString = Math.random().toString(36).substring(2, 8);
-        return `${file?.name}-${timestamp}-${randomString}`;
+    // const createFileName = () => {
+    //     const timestamp = Date.now();
+    //     const randomString = Math.random().toString(36).substring(2, 8);
+    //     return `${file?.name}-${timestamp}-${randomString}`;
+    // }
+
+    // const fileName = createFileName();
+    // const storageRef = ref(storage, `ecommerce/category/${fileName}`);
+    // const uploadTask = uploadBytesResumable(storageRef, file);
+
+    // return new Promise((resolve, reject) => {
+    //     uploadTask.on('state_changed', (snapshot) => {
+    //     }, (error) => {
+    //         console.log(error)
+    //         reject(error);
+    //     }, () => {
+    //         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+    //             resolve(downloadURL);
+    //         }).catch((error) => {
+    //             console.log(error)
+    //             reject(error);
+    //         });
+    //     });
+    // });
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const response = await fetch('/api/Admin/product/upload-file', {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${Cookies.get('token')}`,
+          },
+        body: formData,
+    });
+
+    if (!response.ok) {
+        throw new Error('File upload failed');
     }
 
-    const fileName = createFileName();
-    const storageRef = ref(storage, `ecommerce/category/${fileName}`);
-    const uploadTask = uploadBytesResumable(storageRef, file);
-
-    return new Promise((resolve, reject) => {
-        uploadTask.on('state_changed', (snapshot) => {
-        }, (error) => {
-            console.log(error)
-            reject(error);
-        }, () => {
-            getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-                resolve(downloadURL);
-            }).catch((error) => {
-                console.log(error)
-                reject(error);
-            });
-        });
-    });
+    const data = await response.json();
+    return data.url;
 }
 
 
 
 const maxSize = (value: File) => {
     const fileSize = value.size / 1024 / 1024;
-    return fileSize < 1 ? false : true
+    return fileSize < 5 ? false : true
 }
 
 

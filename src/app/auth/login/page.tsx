@@ -42,6 +42,7 @@ export default function Login() {
             const userData = localStorage.getItem('user');
             const userDataString = typeof userData === 'string' ? userData : '';
             dispatch(setUserData(JSON.parse(userDataString)));
+            
             if (res?.finalData?.user?.role === 'admin') {
                 Router.push('/Dashboard')
             }
